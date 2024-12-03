@@ -8,7 +8,7 @@ import re
 class TRGoals:
     def __init__(self, m3u_dosyasi):
         self.m3u_dosyasi = m3u_dosyasi
-        self.httpx       = Client(timeout=10)
+        self.httpx       = Client()
 
     def referer_domainini_al(self):
         referer_deseni = r'#EXTVLCOPT:http-referrer=(https?://[^/]*trgoals[^/]*\.[^\s/]+)'
@@ -39,35 +39,22 @@ class TRGoals:
 
         return domain
 
-    def yeni_domaini_al(self, eldeki_domain:str):
-        try:
-            yeni_domain = self.trgoals_domaini_al()   
-            if yeni_domain == "https://trgoalsgiris.xyz":
-                raise ValueError("Yeni domain alınamadı")
-        except Exception:
-            konsol.log("[red][!] `trgoals_domaini_al` fonksiyonunda hata oluştu.")
-            try:
-                yeni_domain = self.redirect_gec(eldeki_domain)
-                if yeni_domain == "https://trgoalsgiris.xyz":
-                    raise ValueError("Yeni domain alınamadı")
-            except Exception:
-                konsol.log("[red][!] `redirect_gec(eldeki_domain)` fonksiyonunda hata oluştu.")
-                try:
-                    yeni_domain = self.redirect_gec("https://t.co/JbIFBZKZpO")
-                    if yeni_domain == "https://trgoalsgiris.xyz":
-                        raise ValueError("Yeni domain alınamadı")
-                except Exception:
-                    konsol.log("[red][!] `redirect_gec('https://t.co/JbIFBZKZpO')` fonksiyonunda hata oluştu.")
-                    rakam = int(eldeki_domain.split("trgoals")[1].split(".")[0]) + 1
-                    yeni_domain = f"https://trgoals{rakam}.xyz"
-
-        return yeni_domain
-
     def m3u_guncelle(self):
         eldeki_domain = self.referer_domainini_al()
         konsol.log(f"[yellow][~] Bilinen Domain : {eldeki_domain}")
 
-        yeni_domain = self.yeni_domaini_al(eldeki_domain)
+        try:
+            yeni_domain = self.trgoals_domaini_al()            
+        except Exception:
+            try:
+                yeni_domain = self.redirect_gec(eldeki_domain)
+            except Exception:
+                try:
+                    yeni_domain = self.redirect_gec("https://t.co/JbIFBZKZpO")
+                except Exception:
+                    rakam = int(eldeki_domain.split("trgoals")[1].split(".")[0]) + 1
+                    yeni_domain = f"https://trgoals{rakam}.xyz"
+
         konsol.log(f"[green][+] Yeni Domain    : {yeni_domain}")
 
         kontrol_url = f"{yeni_domain}/channel.html?id=yayin1"
@@ -75,7 +62,7 @@ class TRGoals:
         with open(self.m3u_dosyasi, "r") as dosya:
             m3u_icerik = dosya.read()
 
-        if not (eski_yayin_url := re.search(r'https?:\/\/[^\/]+\.(workers\.dev|shop|cfd)\/?', m3u_icerik)):
+        if not (eski_yayin_url := re.search(r'https?:\/\/[^\/]+\.(workers\.dev|shop)\/?', m3u_icerik)):
             raise ValueError("M3U dosyasında eski yayın URL'si bulunamadı!")
 
         eski_yayin_url = eski_yayin_url[0]
@@ -103,5 +90,5 @@ class TRGoals:
             dosya.write(yeni_m3u_icerik)
 
 if __name__ == "__main__":
-    guncelleyici = TRGoals("Kanallar/KekikAkademi.m3u")
+    guncelleyici = TRGoals("Kanallar/darkervip.m3u")
     guncelleyici.m3u_guncelle()

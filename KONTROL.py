@@ -1,4 +1,4 @@
-# ! Bu araç @keyiflerolsun tarafından | @KekikAkademi için yazılmıştır.
+# Bu araç @keyiflerolsun tarafından yazılmış @darkervip tarafından geliştiriliyordur.
 
 from Kekik.cli    import konsol
 from Kekik        import satir_ekle
@@ -15,7 +15,7 @@ class IPTVParser:
         self.dosya_yolu   = dosya_yolu
         self.kanallar     = []
         self.hata_bulundu = False
-        self.oturum       = Client(verify=False, timeout=10)
+        self.oturum       = Client(verify=False, timeout=5)
 
     def dosya_parse(self):
         with open(self.dosya_yolu, "r", encoding="utf-8") as dosya:
@@ -57,8 +57,8 @@ class IPTVParser:
         satir_ekle(self.HATALAR, """
 ***
 
-> # [![Yayın Kontrolü](https://github.com/keyiflerolsun/IPTV_YenirMi/actions/workflows/Kontrol.yml/badge.svg)](https://github.com/keyiflerolsun/IPTV_YenirMi/actions/workflows/Kontrol.yml)
-> ### [Kanallar/KekikAkademi.m3u](https://github.com/keyiflerolsun/IPTV_YenirMi/blob/main/Kanallar/KekikAkademi.m3u)
+> # [![Yayın Kontrolü](https://github.com/darkervip/darkeriptv/actions/workflows/Kontrol.yml/badge.svg)](https://github.com/darkervip/darkeriptv/actions/workflows/Kontrol.yml)
+> ### [Kanallar/darkervip.m3u](https://github.com/darkervip/darkeriptv/blob/main/Kanallar/darkervip.m3u)
 
 ***
 
@@ -101,5 +101,5 @@ class IPTVParser:
         self.kanallar_kontrol()
 
 if __name__ == "__main__":
-    parser = IPTVParser("Kanallar/KekikAkademi.m3u")
+    parser = IPTVParser("Kanallar/darkervip.m3u")
     parser.run()
